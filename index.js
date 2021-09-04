@@ -1,6 +1,7 @@
 const express = require('express');
 require('dotenv').config();
 
+require('./models/models');
 const db = require('./db');
 
 const app = express();
