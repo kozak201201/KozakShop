@@ -60,6 +60,24 @@ class CategoryController {
             res.status(500).json(e);
         }
     }
+
+    deleteCategory(req, res) {
+        try {
+            const {id} = req.params;
+
+            Category.destroy({where: {id}}).then(result => {
+                if (!result) {
+                    return res.status(404).json({message: `Not found category with id: ${id}`});
+                }
+
+                return res.sendStatus(200);
+            }).catch(err => {
+                res.status(500).send(err);
+            });
+        } catch (e) {
+            res.status(500).json(e);
+        }
+    }
 }
 
 module.exports = new CategoryController();
