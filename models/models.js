@@ -2,13 +2,13 @@ const db = require('../db');
 const {DataTypes} = require('sequelize');
 
 const User = db.define('user', {
-    id: {type: DataTypes.INTEGER, primaryKey: true},
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     login: {type: DataTypes.STRING, unique: true},
     password: {type: DataTypes.STRING, allowNull: false}
 });
 
 const Product = db.define('product', {
-    id: {type: DataTypes.INTEGER, primaryKey: true},
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     name: {type: DataTypes.STRING, allowNull: false},
     price: {type: DataTypes.INTEGER, allowNull: false},
     img: {type: DataTypes.STRING, allowNull: false},
@@ -16,13 +16,13 @@ const Product = db.define('product', {
 });
 
 const Category = db.define('category', {
-    id: {type: DataTypes.INTEGER, primaryKey: true},
-    name: {type: DataTypes.STRING, allowNull: false},
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, unique: true, allowNull: false},
 });
 
 const Manufacture = db.define('manufacture', {
-    id: {type: DataTypes.INTEGER, primaryKey: true},
-    name: {type: DataTypes.STRING, allowNull: false},
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, unique: true, allowNull: false},
 });
 
 const UserProduct = db.define('user_product', {
