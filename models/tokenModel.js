@@ -12,9 +12,20 @@ class TokenModel {
 
         const userLogin = payload.login;
 
-        redisClient.setex(userLogin, refreshExpires * 60 * 60 * 24); //refreshExpires days in seconds
+        redisClient.setex(userLogin, refreshExpires * 60 * 60 * 24, refreshToken); //refreshExpires days in seconds
 
         return ({accessToken, refreshToken});
+    }
+
+    getToken(login) {
+        const promise = new Promise((resolve, reject) => {
+            redisClient.get(login, (err, result) => {
+                if (!result || err) return reject(new Error('Invalid token'));
+                return resolve(result);
+            });
+        });
+
+        return promise;
     }
 
     valideAccessToken(accessToken) {
@@ -27,7 +38,7 @@ class TokenModel {
 
         const promise = new Promise((resolve, reject) => {
             redisClient.get(data.login, (err, result) => {
-                if (!result || err) return reject(new Error(err));
+                if (!result || err) return reject(new Error('Invalid token'));
                 return resolve(result);
             });
         });
@@ -36,7 +47,14 @@ class TokenModel {
     }
 
     deleteToken(login) {
-        redisClient.del(login);
+        const promise = new Promise((resolve, reject) => {
+            redisClient.del(login, (err, result) => {
+                if (!result || err) return reject(new Error('Invalid token'));
+                return resolve(result);
+            });
+        });
+
+        return promise;
     }
 }
 
