@@ -26,20 +26,12 @@ const Manufacture = db.define('manufacture', {
     name: {type: DataTypes.STRING, unique: true, allowNull: false},
 });
 
-const UserProduct = db.define('user_product', {
-    count: {type: DataTypes.INTEGER}
-});
-
 Category.hasMany(Product);
 Manufacture.hasMany(Product);
-
-User.belongsToMany(Product, {through: UserProduct});
-Product.belongsToMany(User, {through: UserProduct});
 
 module.exports = {
     User,
     Product,
     Category,
-    Manufacture,
-    UserProduct
+    Manufacture
 }
