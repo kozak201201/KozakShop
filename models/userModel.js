@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const {User} = require('../models/models');
+const {User} = require('./models');
 const tokenModel = require('./tokenModel');
 
 class UserModel {
