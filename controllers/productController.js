@@ -56,12 +56,21 @@ class ProductController {
     getProducts(req, res) {
         try {
             let {categoryId, manufactureId, limit, page} = req.query;
-            console.log(typeof page);
             limit = +limit || 6;
             page = +page || 1;
             const offset = limit * page - limit;
+
+            const queryObj = {};
+
+            if (categoryId) {
+                queryObj.categoryId = categoryId;
+            }
+
+            if (manufactureId) {
+                queryObj.manufactureId = manufactureId;
+            }
     
-            Product.findAndCountAll({where: {categoryId, manufactureId}, limit, offset}).then(result => {
+            Product.findAndCountAll({where: queryObj, limit, offset}).then(result => {
                 res.json(result.rows);
             }).catch(err => {
                 res.status(500).json(err);
