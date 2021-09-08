@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const {User} = require('./models');
 const tokenModel = require('./tokenModel');
 
-class UserModel {
+class AuthModel {
     async registration(login, password) {
         const findUser = await User.findOne({where: {login}});
 
@@ -49,17 +49,22 @@ class UserModel {
     }
 
     async refresh(refreshToken) {
-        const data = tokenModel.valideRefreshToken(refreshToken);
+        const data = await tokenModel.valideRefreshToken(refreshToken);
+        const userDto = {
+            id: data.id, 
+            login: data.login, 
+            role: data.role
+        };
 
-        await tokenModel.getToken(data.login);
-        const tokens = tokenModel.createTokens(data);
+        const tokens = tokenModel.createTokens(userDto);
 
         return {...tokens}
     }
 
-    async logout(userLogin) {
-        return await tokenModel.deleteToken(userLogin);
+    async logout(refreshToken) {
+        const userDto = await tokenModel.valideRefreshToken(refreshToken);
+        return await tokenModel.deleteToken(userDto.login);
     }
 }
 
-module.exports = new UserModel();
+module.exports = new AuthModel();
