@@ -1,44 +1,45 @@
+const ApiError = require('../exceptions/apiError');
 const {Manufacture} = require('../models/models');
 
 class ManufactureController {
-    getManufactures(req, res) {
+    getManufactures(req, res, next) {
         Manufacture.findAll({raw: true}).then(manufactures => {
             res.send(manufactures);
         }).catch(err => {
-            res.status(500).json(err);
+            next(err);
         });
     }
 
-    getManufacture(req, res) {
+    getManufacture(req, res, next) {
         try {
             const {id} = req.params;
             Manufacture.findOne({where: {id}, raw: true}).then(manufacture => {
 
                 if (!manufacture) {
-                    return res.status(500).json({message: `Not found manufacture with id: ${id}`});
+                    next(ApiError.BadRequest(`Not found manufacture with id: ${id}`));
                 }
 
                 return res.json(manufacture);
             });
         } catch (e) {
-            res.status(500).send(e);
+            next(e);
         }
     }
 
-    createManufacture(req, res) {
+    createManufacture(req, res, next) {
         try {
             const {name} = req.body;
             Manufacture.create({name}).then(() => {
                 res.sendStatus(200);
             }).catch(err => {
-                res.status(500).json(err);
+                next(err);
             })
         } catch (e) {
-            res.status(500).json(e);
+            next(e);
         }
     }
 
-    updateManufacture(req, res) {
+    updateManufacture(req, res, next) {
         try {
             const {id} = req.params;
             const {name} = req.body;
@@ -46,36 +47,36 @@ class ManufactureController {
             Manufacture.findOne({where: {id}, raw: true}).then(manufacture => {
 
                 if (!manufacture) {
-                    return res.status(500).json({message: `Not found manufacture with id: ${id}`});
+                    next(ApiError.BadRequest(`Not found manufacture with id: ${id}`));
                 }
 
                 Manufacture.update({name}, {where: {id}}).then(() => {
                     res.sendStatus(200);
                 }).catch(err => {
-                    res.status(500).send(err);
+                    next(err);
                 });
             });
-
         } catch (e) {
-            res.status(500).json(e);
+            next(e);
         }
     }
 
-    deleteManufacture(req, res) {
+    deleteManufacture(req, res, next) {
         try {
             const {id} = req.params;
 
             Manufacture.destroy({where: {id}}).then(result => {
+
                 if (!result) {
-                    return res.status(404).json({message: `Not found manufacture with id: ${id}`});
+                    next(ApiError.BadRequest(`Not found manufacture with id: ${id}`));
                 }
 
                 return res.sendStatus(200);
             }).catch(err => {
-                res.status(500).send(err);
+                next(err);
             });
         } catch (e) {
-            res.status(500).json(e);
+            next(e);
         }
     }
 }

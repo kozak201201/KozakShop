@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const ApiError = require('../exceptions/apiError');
 const {User} = require('./models');
 const tokenModel = require('./tokenModel');
 
@@ -7,7 +8,7 @@ class AuthModel {
         const findUser = await User.findOne({where: {login}});
 
         if (findUser) {
-            throw new Error("User with this login was found");
+            throw ApiError.BadRequest('User with this login was found');
         }
         
         const hashPassword = bcrypt.hashSync(password, 3);
@@ -29,13 +30,13 @@ class AuthModel {
         const findUser = await User.findOne({where: {login}});
 
         if (!findUser) {
-            throw new Error("User with this login wasn't found");
+            throw new ApiError.BadRequest("User with this login wasn't found");
         }
 
         const isValidPassword = bcrypt.compareSync(password, findUser.password);
 
         if (!isValidPassword) {
-            throw new Error("Invalid password");
+            throw new ApiError.BadRequest("Invalid password");
         }
 
         const userDto = {

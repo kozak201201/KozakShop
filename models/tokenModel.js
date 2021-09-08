@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const redis = require('redis');
+const ApiError = require('../exceptions/apiError');
 const redisClient = redis.createClient();
 
 const accessExpires = 15;
@@ -28,7 +29,7 @@ class TokenModel {
         const promise = new Promise((resolve, reject) => {
             redisClient.get(data.login, (err, result) => {
                 const isValidRefresh = result == refreshToken;
-                if (!result || err || !isValidRefresh) return reject(new Error('Invalid token'));
+                if (!result || err || !isValidRefresh) return reject(ApiError.NoAccess('Invalid token'));
                 else return resolve(data);
             });
         });
@@ -39,7 +40,7 @@ class TokenModel {
     deleteToken(login) {
         const promise = new Promise((resolve, reject) => {
             redisClient.del(login, (err, result) => {
-                if (!result || err) return reject(new Error('Invalid token'));
+                if (!result || err) return reject(ApiError.NoAccess('Invalid token'));
                 return resolve(result);
             });
         });

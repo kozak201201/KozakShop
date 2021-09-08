@@ -1,7 +1,7 @@
 const authModel = require('../models/authModel');
 
 class AuthController {
-    registration(req, res) {
+    registration(req, res, next) {
         try {
             const {login, password} = req.body;
 
@@ -9,14 +9,14 @@ class AuthController {
                 res.cookie('refreshToken', resultData.refreshToken, {maxAge: 15 * 24 * 60 * 60 * 1000, httpOnly: true})
                 res.json(resultData);
             }).catch(err => {
-                res.status(500).json(err);
+                next(err);
             });
         } catch (e) {
-            res.status(500).json(e);
+            next(e);
         }
     }
 
-    login(req, res) {
+    login(req, res, next) {
         try {
             const {login, password} = req.body;
 
@@ -24,14 +24,14 @@ class AuthController {
                 res.cookie('refreshToken', resultData.refreshToken, {maxAge: 15 * 24 * 60 * 60 * 1000, httpOnly: true})
                 res.json(resultData);
             }).catch(err => {
-                res.status(500).json(err);
+                next(err);
             });
         } catch (e) {
-            res.status(500).json(e);
+            next(e);
         }
     }
 
-    logout(req, res) {
+    logout(req, res, next) {
         try {
             const {refreshToken} = req.cookies;
 
@@ -39,14 +39,14 @@ class AuthController {
                 res.clearCookie('refreshToken');
                 res.sendStatus(200);
             }).catch(err => {
-                res.status(500).json(err);
+                next(err);
             });
         } catch (e) {
-            res.status(500).json(e);
+            next(e);
         }
     }
 
-    refresh(req, res) {
+    refresh(req, res, next) {
         try {
             const {refreshToken} = req.cookies;
 
@@ -54,10 +54,10 @@ class AuthController {
                 res.cookie('refreshToken', resultData.refreshToken, {maxAge: 15 * 24 * 60 * 60 * 1000, httpOnly: true})
                 res.json(resultData);
             }).catch(err => {
-                res.status(500).json(err);
+                next(err);
             });
         } catch (e) {
-            res.status(500).json(e);
+            next(e);
         }
     }
 }

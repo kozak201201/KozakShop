@@ -1,9 +1,10 @@
 const path = require('path');
 const uuid = require('uuid');
+const ApiError = require('../exceptions/apiError');
 const {Product} = require('../models/models');
 
 class ProductController {
-    createProduct(req, res) {
+    createProduct(req, res, next) {
         try {
             const {
                 name, 
@@ -28,32 +29,32 @@ class ProductController {
             }).then(() => {
                 res.sendStatus(200);
             }).catch(err => {
-                res.status(500).json(err);
+                next(err);
             })
         } catch (e) {
-            res.status(500).json(e);
+            next(e);
         }
     }
 
-    getProduct(req, res) {
+    getProduct(req, res, next) {
         try {
             const {id} = req.params;
             Product.findByPk(id).then(product => {
 
                 if (!product) {
-                    return res.status(404).send('Not found');
+                    ApiError.BadRequest('Not found');
                 }
 
                 return res.json(product);
             }).catch(err => {
-                res.status(500).json(err);
-            })
+                next(err);
+            });
         } catch (e) {
-            res.status(500).json(e);
+            next(e);
         }
     }
 
-    getProducts(req, res) {
+    getProducts(req, res, next) {
         try {
             let {categoryId, manufactureId, limit, page} = req.query;
             limit = +limit || 6;
@@ -73,11 +74,10 @@ class ProductController {
             Product.findAndCountAll({where: queryObj, limit, offset}).then(result => {
                 res.json(result.rows);
             }).catch(err => {
-                res.status(500).json(err);
+                next(err);
             });
         } catch (e) {
-            console.log(e);
-            res.status(500).json(e);
+            next(e);
         }
     }
 }
