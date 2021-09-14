@@ -42,7 +42,7 @@ class ProductController {
             Product.findByPk(id).then(product => {
 
                 if (!product) {
-                    ApiError.BadRequest('Not found');
+                    return next(ApiError.BadRequest('Not found'));
                 }
 
                 return res.json(product);

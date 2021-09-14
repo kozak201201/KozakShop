@@ -26,6 +26,13 @@ const Manufacture = db.define('manufacture', {
     name: {type: DataTypes.STRING, unique: true, allowNull: false},
 });
 
+const Comment = db.define('comment', {
+    comment: {type: DataTypes.STRING}
+});
+
+User.belongsToMany(Product, {through: Comment});
+Product.belongsToMany(User, {through: Comment});
+
 Category.hasMany(Product);
 Manufacture.hasMany(Product);
 
@@ -33,5 +40,6 @@ module.exports = {
     User,
     Product,
     Category,
-    Manufacture
+    Manufacture,
+    Comment
 }

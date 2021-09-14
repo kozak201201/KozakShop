@@ -1,3 +1,4 @@
+const ApiError = require('../exceptions/apiError');
 const tokenModel = require('../models/tokenModel');
 
 module.exports = function(role) {
@@ -5,22 +6,19 @@ module.exports = function(role) {
         const authorizationHeader = req.headers.authorization;
 
         if (!authorizationHeader) {
-            return res.status(401).json({message: 'Unauthorize'});
+            return next(ApiError.Unauthorize());
         }
 
         const token = authorizationHeader.split(' ')[1];
 
         if (!token) {
-            return res.status(401).json({message: 'Unauthorize'});
+            return next(ApiError.Unauthorize());
         }
 
-        tokenModel.valideRefreshToken(token).then(userDto => {
-            if (userDto.role !== role) {
-                return res.status(403).json({message: 'No access'})
-            }
-            next();
-        }).catch(err => {
-            return res.status(500).json({message: err.message});
-        });
+        const userDto = tokenModel.valideAccessToken(token);
+        if (userDto.role !== role) {
+            return next(ApiError.NoAccess('Invalid token'));
+        }
+        next();
     }
 }
